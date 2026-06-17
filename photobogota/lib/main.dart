@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'core/theme/theme.dart';
-import 'presentation/screens/auth_wrapper.dart'; // Importas tu wrapper
+import 'features/auth/presentation/screens/auth_wrapper.dart'; // Importas tu wrapper
 
 void main() {
   runApp(const PhotoBogotaApp());
