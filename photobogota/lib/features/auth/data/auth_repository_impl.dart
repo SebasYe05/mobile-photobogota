@@ -1,6 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../domain/auth_repository.dart';
 import 'auth_remote_data_source.dart';
+import '../domain/entities/auth_entity.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
@@ -9,14 +10,18 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<String> login(String login, String contrasena) async {
-    final token = await remoteDataSource.login(login, contrasena);
-    await storage.write(key: 'jwt_token', value: token);
-    return token;
+  Future<AuthEntity> login(String login, String contrasena) async {
+    final model = await remoteDataSource.login(login, contrasena);
+    await storage.write(key: 'jwt_token', value: model.token);
+    return model.toEntity(); // ← entidad limpia hacia arriba
   }
 
   @override
-  Future<void> register({required String username, required String email, required String password}) async {
+  Future<void> register({
+    required String username,
+    required String email,
+    required String password,
+  }) async {
     await remoteDataSource.register({
       'username': username,
       'email': email,
