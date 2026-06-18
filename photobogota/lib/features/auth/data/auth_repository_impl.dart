@@ -9,8 +9,8 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<String> login(String username, String password) async {
-    final token = await remoteDataSource.login(username, password);
+  Future<String> login(String login, String contrasena) async {
+    final token = await remoteDataSource.login(login, contrasena);
     await storage.write(key: 'jwt_token', value: token);
     return token;
   }

@@ -1,5 +1,5 @@
 abstract class AuthRepository {
-  Future<String> login(String username, String password);
+  Future<String> login(String login, String contrasena);
   Future<void> register({
     required String username,
     required String email,

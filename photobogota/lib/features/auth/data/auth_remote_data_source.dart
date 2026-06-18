@@ -10,11 +10,11 @@ class AuthRemoteDataSource {
 
   AuthRemoteDataSource(this._dio);
 
-  Future<String> login(String username, String password) async {
+  Future<String> login(String login, String contrasena) async {
     try {
       final response = await _dio.post(
         '$_baseUrl/auth/login', // Ajusta al endpoint real de tu Spring Boot
-        data: {'username': username, 'password': password},
+        data: {'login': login, 'contrasena': contrasena},
       );
 
       // Tu Spring Boot retorna {"token": "JWT_HERE"}

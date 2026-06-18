@@ -59,7 +59,7 @@ class LoginScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 context.read<AuthBloc>().add(
-                  LoginSubmitted('juan_marin', 'password123'),
+                  LoginSubmitted('23bitss', 'Sergiogeien4'),
                 );
               },
               child: const Text('Iniciar Sesión'),

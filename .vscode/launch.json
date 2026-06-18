@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter web puerto fijo",
+      "type": "dart",
+      "request": "launch",
+      "program": "photobogota/lib/main.dart", 
+      "args": [
+        "--web-port", "55352",
+        "--web-hostname", "localhost"
+      ]
+    }
+  ]
+}
