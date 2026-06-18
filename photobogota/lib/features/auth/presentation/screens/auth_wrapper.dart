@@ -1,54 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../controllers/auth_bloc.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
 
-  // Simulación de lectura de token (aquí usarás FlutterSecureStorage o SharedPreferences)
-  Future<bool> _checkAuthStatus() async {
-    await Future.delayed(const Duration(seconds: 1)); // Simula leer el storage
-    // Cambia a 'false' para ver cómo te manda al Login
-    return true; 
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is Authenticated) {
+          // Retorna tu MapScreen() cuando el BLoC confirme que hay sesión
+          return const Scaffold(body: Center(child: Text("Aquí va tu Mapa Screen"))); 
+        }
+        if (state is AuthLoading) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        // Si no está autenticado o falla, directo al Login
+        return const LoginScreen(); 
+      },
+    );
   }
+}
+
+// Un LoginScreen rápido de ejemplo para ver cómo disparar el evento
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      future: _checkAuthStatus(),
-      builder: (context, snapshot) {
-        // Mientras lee el almacenamiento, muestra una pantalla de carga estética
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF806FBE)),
-              ),
-            ),
-          );
-        }
-
-        // Si está autenticado, va al mapa. Si no, al Login.
-        if (snapshot.data == true) {
-          //return const MapScreen();
-          return const Scaffold(
-            body: Center(
-              child: Text(
-                'Mapa de Bogotá',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-            ),
-          );
-        } else {
-          //return const LoginScreen();
-          return const Scaffold(
-            body: Center(
-              child: Text(
-                'Inicia sesión para ver el mapa',
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
-          );
-        }
-      },
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            // Así disparas la petición a Spring Boot mediante BLoC:
+            context.read<AuthBloc>().add(LoginSubmitted('juan_marin', 'password123'));
+          },
+          child: const Text("Iniciar Sesión"),
+        ),
+      ),
     );
   }
 }
