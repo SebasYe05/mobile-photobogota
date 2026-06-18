@@ -9,34 +9,62 @@ class AuthWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
+        // Cargando o verificando token inicial → spinner
+        if (state is AuthInitial || state is AuthLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        // Autenticado → pantalla principal
         if (state is Authenticated) {
-          // Retorna tu MapScreen() cuando el BLoC confirme que hay sesión
-          return const Scaffold(body: Center(child: Text("Aquí va tu Mapa Screen"))); 
+          return const Scaffold(
+            body: Center(child: Text('Aquí va tu MapScreen')),
+          );
         }
-        if (state is AuthLoading) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+
+        // Falló el login → LoginScreen con mensaje de error
+        if (state is AuthFailure) {
+          return LoginScreen(errorMessage: state.message);
         }
-        // Si no está autenticado o falla, directo al Login
-        return const LoginScreen(); 
+
+        // Unauthenticated (logout o sin token)
+        return const LoginScreen();
       },
     );
   }
 }
 
-// Un LoginScreen rápido de ejemplo para ver cómo disparar el evento
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  final String? errorMessage;
+
+  const LoginScreen({super.key, this.errorMessage});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            // Así disparas la petición a Spring Boot mediante BLoC:
-            context.read<AuthBloc>().add(LoginSubmitted('juan_marin', 'password123'));
-          },
-          child: const Text("Iniciar Sesión"),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Muestra el error si viene de AuthFailure
+            if (errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(
+                  errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            ElevatedButton(
+              onPressed: () {
+                context.read<AuthBloc>().add(
+                  LoginSubmitted('juan_marin', 'password123'),
+                );
+              },
+              child: const Text('Iniciar Sesión'),
+            ),
+          ],
         ),
       ),
     );

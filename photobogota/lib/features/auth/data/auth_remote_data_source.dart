@@ -2,30 +2,39 @@ import 'package:dio/dio.dart';
 
 class AuthRemoteDataSource {
   final Dio _dio;
-  // Cambia por tu IP local de desarrollo (evita localhost si usas emulador Android, usa 10.0.2.2)
-  final String _baseUrl = 'http://127.0.0.1:8080/api/v1'; 
+
+  // 10.0.2.2 → tu máquina desde el emulador Android
+  // En dispositivo físico: usa tu IP local (ej: 192.168.1.x)
+  // En iOS simulator: puedes usar 127.0.0.1
+  static const String _baseUrl = 'http://127.0.0.1:8080/api/v1';
 
   AuthRemoteDataSource(this._dio);
 
   Future<String> login(String username, String password) async {
     try {
       final response = await _dio.post(
-        '$_baseUrl/controller/login', // TODO: Ajusta según tus endpoints reales
+        '$_baseUrl/auth/login', // Ajusta al endpoint real de tu Spring Boot
         data: {'username': username, 'password': password},
       );
-      
-      // Asumiendo que tu backend retorna {"token": "JWT_HERE"}
-      return response.data['token']; 
+
+      // Tu Spring Boot retorna {"token": "JWT_HERE"}
+      return response.data['token'] as String;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'Error al iniciar sesión');
+      final msg = e.response?.data is Map
+          ? e.response?.data['message']
+          : null;
+      throw Exception(msg ?? 'Error al iniciar sesión');
     }
   }
 
   Future<void> register(Map<String, dynamic> userData) async {
     try {
-      await _dio.post('$_baseUrl/controller/register', data: userData);
+      await _dio.post('$_baseUrl/auth/register', data: userData);
     } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'Error en el registro');
+      final msg = e.response?.data is Map
+          ? e.response?.data['message']
+          : null;
+      throw Exception(msg ?? 'Error en el registro');
     }
   }
 }
