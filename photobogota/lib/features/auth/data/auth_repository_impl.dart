@@ -18,14 +18,24 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> register({
-    required String username,
+    required String nombresCompletos,
     required String email,
-    required String password,
+    required String nombreUsuario,
+    required String contrasena,
+    required String fechaNacimiento,
   }) async {
     await remoteDataSource.register({
-      'username': username,
+      'nombresCompletos': nombresCompletos,
       'email': email,
-      'password': password,
+      'nombreUsuario': nombreUsuario,
+      'contrasena': contrasena,
+      'fechaNacimiento': fechaNacimiento,
+      'telefono': "",
+      'fotoPerfil': "",
+      'estadoCuenta': true,
+      'biografia': "",
+      'correoConfirmado': false,
+      'roles': ["miembro"],
     });
   }
 

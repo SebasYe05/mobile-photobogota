@@ -14,9 +14,26 @@ class AuthCheckRequested extends AuthEvent {}
 class LoginSubmitted extends AuthEvent {
   final String username;
   final String password;
-  
+
   // Recibe las credenciales que el usuario escribió en los inputs text
   LoginSubmitted(this.username, this.password);
+}
+
+/// Evento que se dispara cuando el usuario llena el formulario de registro y presiona "Guardar".
+class RegisterSubmitted extends AuthEvent {
+  final String nombresCompletos;
+  final String email;
+  final String nombreUsuario;
+  final String contrasena;
+  final String fechaNacimiento;
+
+  RegisterSubmitted({
+    required this.nombresCompletos,
+    required this.email,
+    required this.nombreUsuario,
+    required this.contrasena,
+    required this.fechaNacimiento,
+  });
 }
 
 /// Evento que se dispara cuando el usuario presiona el botón de "Cerrar Sesión".
@@ -41,7 +58,13 @@ class Authenticated extends AuthState {}
 /// Estado de salida: El usuario no está autenticado. La vista muestra el login.
 class Unauthenticated extends AuthState {}
 
-/// Estado de error: Algo salió mal (ej. contraseña incorrecta). La vista muestra un SnackBar con el mensaje.
+/// Estado de éxito de registro: la cuenta se creó correctamente.
+/// Nota: NO es lo mismo que Authenticated, porque registrarse no inicia sesión
+/// automáticamente (tu backend solo confirma la creación, no devuelve token aquí).
+class RegisterSuccess extends AuthState {}
+
+/// Estado de error: Algo salió mal (ej. contraseña incorrecta, email duplicado, etc).
+/// La vista muestra un SnackBar con el mensaje. Sirve tanto para login como para registro.
 class AuthFailure extends AuthState {
   final String message;
   AuthFailure(this.message);
@@ -53,20 +76,20 @@ class AuthFailure extends AuthState {
 // ==========================================
 /// Esta clase es el cerebro de la pantalla. Recibe [AuthEvent] y emite [AuthState].
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  // Inyección de dependencias: El BLoC NO sabe cómo hablar con internet, 
+  // Inyección de dependencias: El BLoC NO sabe cómo hablar con internet,
   // le pide ayuda al Repositorio (Capa de Domain).
   final AuthRepository authRepository;
 
   // Al inicializar el BLoC, definimos que el primer estado de la pantalla será 'AuthInitial'
   AuthBloc({required this.authRepository}) : super(AuthInitial()) {
-    
+
     // ------------------------------------------
     // MANEJADOR DEL EVENTO: AuthCheckRequested
     // ------------------------------------------
     on<AuthCheckRequested>((event, emit) async {
       // Le pedimos al repositorio el token que guardamos en el almacenamiento seguro
       final token = await authRepository.getToken();
-      
+
       if (token != null) {
         // Si hay un token guardado, le decimos a la vista: "¡Ya está autenticado!"
         emit(Authenticated());
@@ -82,16 +105,42 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoginSubmitted>((event, emit) async {
       // Pasito 1: Inmediatamente le avisamos a la vista que ponga un spinner de carga
       emit(AuthLoading());
-      
+
       try {
         // Pasito 2: Mandamos los datos que venían en el evento hacia el repositorio
         await authRepository.login(event.username, event.password);
-        
+
         // Pasito 3: Si el repositorio no falló, emitimos éxito
         emit(Authenticated());
       } catch (e) {
-        // Pasito 4: Si el repositorio atrapó un error de red o credenciales, 
+        // Pasito 4: Si el repositorio atrapó un error de red o credenciales,
         // emitimos el fallo con el mensaje correspondiente para avisar al usuario.
+        emit(AuthFailure(e.toString()));
+      }
+    });
+
+    // ------------------------------------------
+    // MANEJADOR DEL EVENTO: RegisterSubmitted
+    // ------------------------------------------
+    on<RegisterSubmitted>((event, emit) async {
+      // Pasito 1: avisamos a la vista que muestre el spinner de carga
+      emit(AuthLoading());
+
+      try {
+        // Pasito 2: mandamos los datos del formulario de registro hacia el repositorio
+        await authRepository.register(
+          nombresCompletos: event.nombresCompletos,
+          email: event.email,
+          nombreUsuario: event.nombreUsuario,
+          contrasena: event.contrasena,
+          fechaNacimiento: event.fechaNacimiento,
+        );
+
+        // Pasito 3: si no hubo error, la cuenta se creó correctamente
+        emit(RegisterSuccess());
+      } catch (e) {
+        // Pasito 4: si el backend rechazó el registro (ej. email duplicado),
+        // mostramos el mensaje de error a la vista
         emit(AuthFailure(e.toString()));
       }
     });
@@ -102,10 +151,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogoutRequested>((event, emit) async {
       // Ponemos la app en estado de carga mientras borramos los datos locales
       emit(AuthLoading());
-      
+
       // Borramos el JWT Token del FlutterSecureStorage a través del repositorio
       await authRepository.logout();
-      
+
       // Le avisamos a la vista que regrese al flujo de desautenticado (pantalla de login)
       emit(Unauthenticated());
     });
