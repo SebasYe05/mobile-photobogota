@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:photobogota/presentation/screens/auth/register_screen.dart';
+import 'package:photobogota/features/auth/presentation/screens/register_screen.dart';
 import 'package:http/http.dart' as http;
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -32,25 +32,6 @@ class _LoginState extends State<Login> {
 
               children: [
                 const SizedBox(height: 40),
-
-                //Container(
-                //  width: 140,
-                //  height: 140,
-                //
-                //  decoration: BoxDecoration(
-                //    color: Color(0xFFc5c5c5),
-                //
-                //    borderRadius: BorderRadius.circular(70),
-                //  ),
-                //
-                //  child: ClipRRect(
-                //    borderRadius: BorderRadius.circular(70),
-                //    child: Image.asset(
-                //      "assets/images/photobogotaimg.jfif",
-                //      fit: BoxFit.cover,
-                //    ),
-                //  ),
-                //),
                 const SizedBox(height: 20),
 
                 const Text(

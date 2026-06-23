@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:photobogota/widgets/inputtext.dart';
+import 'package:photobogota/features/auth/presentation/widgets/inputtext.dart';
 
 class Registro extends StatefulWidget {
   const Registro({super.key});
@@ -28,7 +28,7 @@ class _RegistroState extends State<Registro> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Crea tu cuenta'),
+        title: const Text('Photo Bogotá'),
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF806fbe),
       ),
@@ -39,10 +39,10 @@ class _RegistroState extends State<Registro> {
           key: formKey,
           child: Column(
             crossAxisAlignment:
-                CrossAxisAlignment.start, // <--- Alineado a la izquierda
+                CrossAxisAlignment.start,
             children: [
               const Text(
-                "Photo Bogotá",
+                "Crea tu cuenta",
                 style: TextStyle(
                   fontSize: 34,
                   fontWeight: FontWeight.bold,
@@ -84,7 +84,7 @@ class _RegistroState extends State<Registro> {
                     context: context,
                     initialDate: DateTime.now(),
                     firstDate: DateTime(1950),
-                    lastDate: DateTime(2027),
+                    lastDate: DateTime(2099),
                   );
                   if (fecha != null) {
                     setState(() {
