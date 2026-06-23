@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photobogota/features/auth/presentation/screens/login_screen.dart';
+import 'package:photobogota/features/home/presentation/screens/home_screen.dart';
 import '../controllers/auth_bloc.dart';
 
 class AuthWrapper extends StatelessWidget {
@@ -19,9 +20,7 @@ class AuthWrapper extends StatelessWidget {
 
         // Autenticado → pantalla principal
         if (state is Authenticated) {
-          return const Scaffold(
-            body: Center(child: Text('Aquí va tu MapScreen')),
-          );
+          return const HomeScreen();
         }
 
         // Unauthenticated (logout o sin token)
