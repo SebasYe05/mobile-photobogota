@@ -21,6 +21,29 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            Container(
+              height: 70,
+              decoration: BoxDecoration(
+                color: const Color(0xFF806fbe),
+              ),
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: const Text(
+                'Photo Bogotá',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            )
+          ]
+        ),
+      ),
       body: const Center(
         child: Text(
           'Aquí va tu mapa',
