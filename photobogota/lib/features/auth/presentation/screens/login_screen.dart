@@ -20,50 +20,53 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
-            child: Column(
-              children: [
-                const SizedBox(height: 40),
-                const SizedBox(height: 20),
-                const Text(
-                  "Accede a tu cuenta",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: AppTheme.primaryColor,
-                    fontFamily: 'SF Pro',
-                  ),
-                ),
-                const Text(
-                  "Photo Bogotá",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 34,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.darkColor,
-                    fontFamily: 'SF Pro',
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: BlocConsumer<AuthBloc, AuthState>(
-                    listener: (context, state) {
-                      if (state is AuthFailure) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.message)),
-                        );
-                      }
-                    },
-                    builder: (context, state) {
-                      final cargando = state is AuthLoading;
-                      return Form(
-                        key: formKey,
+            child: Form(
+              key: formKey,
+              child: BlocConsumer<AuthBloc, AuthState>(
+listener: (context, state) {
+                   if (state is AuthFailure) {
+                     WidgetsBinding.instance.addPostFrameCallback((_) {
+                       ScaffoldMessenger.of(context).showSnackBar(
+                         SnackBar(content: Text(state.message)),
+                       );
+                     });
+                   }
+                 },
+                builder: (context, state) {
+                  final cargando = state is AuthLoading;
+
+                  return Column(
+                    children: [
+                      const SizedBox(height: 40),
+                      const SizedBox(height: 20),
+                      const Text(
+                        "Accede a tu cuenta",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppTheme.primaryColor,
+                          fontFamily: 'SF Pro',
+                        ),
+                      ),
+                      const Text(
+                        "Photo Bogotá",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 34,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.darkColor,
+                          fontFamily: 'SF Pro',
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.all(20),
                         child: Column(
                           children: [
                             CampoTexto(
@@ -114,43 +117,43 @@ class _LoginState extends State<Login> {
                             ),
                           ],
                         ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 25),
-                Divider(color: AppTheme.borderColor, thickness: 1),
-                const SizedBox(height: 25),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      "¿Eres nuevo en Photo Bogotá? ",
-                      style: TextStyle(
-                        fontFamily: 'SF Pro',
-                        fontSize: 14,
-                        color: AppTheme.darkColor,
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const Registro()),
-                        );
-                      },
-                      child: const Text(
-                        "Crear cuenta",
-                        style: TextStyle(
-                          fontFamily: 'SF Pro',
-                          color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      const SizedBox(height: 25),
+                      Divider(color: AppTheme.borderColor, thickness: 1),
+                      const SizedBox(height: 25),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            "¿Eres nuevo en Photo Bogotá? ",
+                            style: TextStyle(
+                              fontFamily: 'SF Pro',
+                              fontSize: 14,
+                              color: AppTheme.darkColor,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const Registro()),
+                              );
+                            },
+                            child: const Text(
+                              "Crear cuenta",
+                              style: TextStyle(
+                                fontFamily: 'SF Pro',
+                                color: AppTheme.primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -159,16 +162,8 @@ class _LoginState extends State<Login> {
   }
 
   void _login() {
-    final username = usuarioController.text.trim();
-    final password = passwordController.text.trim();
-
-    if (username.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Ingresa usuario y contraseña")),
-      );
-      return;
-    }
-
-    context.read<AuthBloc>().add(LoginSubmitted(username, password));
+    context.read<AuthBloc>().add(
+      LoginSubmitted(usuarioController.text.trim(), passwordController.text.trim()),
+    );
   }
 }
