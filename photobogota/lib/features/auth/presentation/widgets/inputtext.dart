@@ -8,6 +8,7 @@ class CampoTexto extends StatefulWidget {
   final bool esPassword;
   final VoidCallback? onTap;
   final bool soloLectura;
+  final String? Function(String?)? validator;
 
   const CampoTexto({
     super.key,
@@ -18,6 +19,7 @@ class CampoTexto extends StatefulWidget {
     this.esPassword = false,
     this.onTap,
     this.soloLectura = false,
+    this.validator,
   });
 
   @override
@@ -37,6 +39,7 @@ class _CampoTextoState extends State<CampoTexto> {
         obscureText: widget.esPassword ? ocultar : false,
         readOnly: widget.soloLectura,
         onTap: widget.onTap,
+        validator: widget.validator,
         decoration: InputDecoration(
           labelText: widget.label,
           prefixIcon: Icon(widget.icon),

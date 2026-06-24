@@ -84,21 +84,48 @@ class _RegistroState extends State<Registro> {
                     label: 'Correo electrónico',
                     icon: Icons.email,
                     tipoTeclado: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingresa tu correo electrónico';
+                      }
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                        return 'Ingresa un correo válido';
+                      }
+                      return null;
+                    },
                   ),
                   CampoTexto(
                     controller: nombreController,
                     label: 'Nombre',
                     icon: Icons.edit,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingresa tu nombre';
+                      }
+                      return null;
+                    },
                   ),
                   CampoTexto(
                     controller: apellidoController,
                     label: 'Apellido',
                     icon: Icons.edit,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingresa tu apellido';
+                      }
+                      return null;
+                    },
                   ),
                   CampoTexto(
                     controller: usuarioController,
                     label: 'Usuario',
                     icon: Icons.person,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingresa tu usuario';
+                      }
+                      return null;
+                    },
                   ),
                   CampoTexto(
                     controller: fechaController,
@@ -120,18 +147,42 @@ class _RegistroState extends State<Registro> {
                         });
                       }
                     },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Selecciona tu fecha de nacimiento';
+                      }
+                      return null;
+                    },
                   ),
                   CampoTexto(
                     controller: passwordController,
                     label: 'Contraseña',
                     icon: Icons.lock,
                     esPassword: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingresa tu contraseña';
+                      }
+                      if (value.length < 8) {
+                        return 'La contraseña debe tener al menos 8 caracteres';
+                      }
+                      return null;
+                    },
                   ),
                   CampoTexto(
                     controller: confirmarPasswordController,
                     label: 'Confirmar contraseña',
                     icon: Icons.lock_outline,
                     esPassword: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Confirma tu contraseña';
+                      }
+                      if (value != passwordController.text) {
+                        return 'Las contraseñas no coinciden';
+                      }
+                      return null;
+                    },
                   ),
 
                   const SizedBox(height: 20),

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photobogota/features/auth/presentation/screens/register_screen.dart';
 import 'package:photobogota/features/auth/presentation/controllers/auth_bloc.dart';
 import 'package:photobogota/core/theme/theme.dart';
+import 'package:photobogota/features/auth/presentation/widgets/inputtext.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -12,6 +13,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final formKey = GlobalKey<FormState>();
   final usuarioController = TextEditingController();
   final passwordController = TextEditingController();
   bool ocultarPassword = true;
@@ -25,17 +27,18 @@ class _LoginState extends State<Login> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 40),
                 const SizedBox(height: 20),
                 const Text(
                   "Accede a tu cuenta",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: AppTheme.primaryColor, fontFamily: 'SF Pro'),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppTheme.primaryColor,
+                    fontFamily: 'SF Pro',
+                  ),
                 ),
-                const SizedBox(height: 10),
                 const Text(
                   "Photo Bogotá",
                   textAlign: TextAlign.center,
@@ -47,75 +50,72 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Card(
-                  elevation: 8,
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: BlocConsumer<AuthBloc, AuthState>(
-                      listener: (context, state) {
-                        if (state is AuthFailure) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(state.message)),
-                          );
-                        }
-                      },
-                      builder: (context, state) {
-                        final cargando = state is AuthLoading;
-                        return Column(
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: BlocConsumer<AuthBloc, AuthState>(
+                    listener: (context, state) {
+                      if (state is AuthFailure) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.message)),
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      final cargando = state is AuthLoading;
+                      return Form(
+                        key: formKey,
+                        child: Column(
                           children: [
-                            TextField(
+                            CampoTexto(
                               controller: usuarioController,
-                              enabled: !cargando,
-                              decoration: InputDecoration(
-                                labelText: "Usuario o correo",
-                                prefixIcon: const Icon(Icons.person),
-                              ),
+                              label: 'Usuario o correo',
+                              icon: Icons.person,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Ingresa tu usuario o correo';
+                                }
+                                return null;
+                              },
                             ),
                             const SizedBox(height: 20),
-                            TextField(
+                            CampoTexto(
                               controller: passwordController,
-                              obscureText: ocultarPassword,
-                              enabled: !cargando,
-                              decoration: InputDecoration(
-                                labelText: "Contraseña",
-                                prefixIcon: const Icon(Icons.lock),
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    ocultarPassword
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      ocultarPassword = !ocultarPassword;
-                                    });
-                                  },
-                                ),
-                              ),
+                              label: 'Contraseña',
+                              icon: Icons.lock,
+                              esPassword: true,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Ingresa tu contraseña';
+                                }
+                                if (value.length < 8) {
+                                  return 'La contraseña debe tener al menos 8 caracteres';
+                                }
+                                return null;
+                              },
                             ),
                             const SizedBox(height: 30),
                             SizedBox(
                               width: double.infinity,
                               height: 55,
                               child: ElevatedButton(
-                                onPressed: cargando ? null : _login,
+                                onPressed: cargando
+                                    ? null
+                                    : () {
+                                        if (formKey.currentState!.validate()) {
+                                          _login();
+                                        }
+                                      },
                                 child: cargando
                                     ? const CircularProgressIndicator(
                                         color: Colors.white,
                                       )
-                                    : const Text(
-                                        "Ingresar",
-                                      ),
+                                    : const Text("Ingresar"),
                               ),
                             ),
                           ],
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 25),
