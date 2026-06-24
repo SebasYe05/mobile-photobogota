@@ -121,22 +121,34 @@ class _LoginState extends State<Login> {
                 const SizedBox(height: 25),
                 Divider(color: AppTheme.borderColor, thickness: 1),
                 const SizedBox(height: 25),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Registro()),
-                    );
-                  },
-                  child: const Text(
-                    "¿Eres nuevo en Photo Bogotá? Crear cuenta",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppTheme.primaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'SF Pro',
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "¿Eres nuevo en Photo Bogotá? ",
+                      style: TextStyle(
+                        fontFamily: 'SF Pro',
+                        fontSize: 14,
+                        color: AppTheme.darkColor,
+                      ),
                     ),
-                  ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const Registro()),
+                        );
+                      },
+                      child: const Text(
+                        "Crear cuenta",
+                        style: TextStyle(
+                          fontFamily: 'SF Pro',
+                          color: AppTheme.primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
