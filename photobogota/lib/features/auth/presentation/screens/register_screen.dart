@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photobogota/features/auth/presentation/widgets/inputtext.dart';
 import 'package:photobogota/features/auth/presentation/controllers/auth_bloc.dart';
 import 'package:photobogota/features/auth/presentation/screens/login_screen.dart';
+import 'package:photobogota/core/theme/theme.dart';
 
 class Registro extends StatefulWidget {
   const Registro({super.key});
@@ -28,11 +29,11 @@ class _RegistroState extends State<Registro> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Photo Bogotá'),
+        title: const Text('Photobogotá'),
         backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF806fbe),
+        foregroundColor: AppTheme.primaryColor,
       ),
-      backgroundColor: const Color(0xFFf5f2eb),
+      backgroundColor: AppTheme.backgroundColor,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(
@@ -70,10 +71,11 @@ class _RegistroState extends State<Registro> {
                     style: TextStyle(
                       fontSize: 34,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF0a0a0a),
+                      color: AppTheme.darkColor,
+                      fontFamily: 'SF Pro',
                     ),
                   ),
-                  Divider(color: Colors.grey[300], thickness: 1),
+                  Divider(color: AppTheme.borderColor, thickness: 1),
                   const SizedBox(height: 20),
 
                   // Campos de texto

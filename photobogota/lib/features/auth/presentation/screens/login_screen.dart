@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photobogota/features/auth/presentation/screens/register_screen.dart';
 import 'package:photobogota/features/auth/presentation/controllers/auth_bloc.dart';
+import 'package:photobogota/core/theme/theme.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -18,7 +19,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFf5f2eb),
+      backgroundColor: AppTheme.backgroundColor,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -32,7 +33,7 @@ class _LoginState extends State<Login> {
                 const Text(
                   "Accede a tu cuenta",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Color(0xFF806FBE)),
+                  style: TextStyle(fontSize: 16, color: AppTheme.primaryColor, fontFamily: 'SF Pro'),
                 ),
                 const SizedBox(height: 10),
                 const Text(
@@ -41,7 +42,8 @@ class _LoginState extends State<Login> {
                   style: TextStyle(
                     fontSize: 34,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF0a0a0a),
+                    color: AppTheme.darkColor,
+                    fontFamily: 'SF Pro',
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -71,12 +73,6 @@ class _LoginState extends State<Login> {
                               decoration: InputDecoration(
                                 labelText: "Usuario o correo",
                                 prefixIcon: const Icon(Icons.person),
-                                fillColor: Colors.white,
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                  borderSide: BorderSide.none,
-                                ),
                               ),
                             ),
                             const SizedBox(height: 20),
@@ -99,12 +95,6 @@ class _LoginState extends State<Login> {
                                     });
                                   },
                                 ),
-                                fillColor: Colors.white,
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                  borderSide: BorderSide.none,
-                                ),
                               ),
                             ),
                             const SizedBox(height: 30),
@@ -113,23 +103,12 @@ class _LoginState extends State<Login> {
                               height: 55,
                               child: ElevatedButton(
                                 onPressed: cargando ? null : _login,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF806fbe),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                ),
                                 child: cargando
                                     ? const CircularProgressIndicator(
                                         color: Colors.white,
                                       )
                                     : const Text(
                                         "Ingresar",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
                                       ),
                               ),
                             ),
@@ -140,7 +119,7 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 const SizedBox(height: 25),
-                Divider(color: Colors.grey[300], thickness: 1),
+                Divider(color: AppTheme.borderColor, thickness: 1),
                 const SizedBox(height: 25),
                 TextButton(
                   onPressed: () {
@@ -153,8 +132,9 @@ class _LoginState extends State<Login> {
                     "¿Eres nuevo en Photo Bogotá? Crear cuenta",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Color(0xFF806fbe),
+                      color: AppTheme.primaryColor,
                       fontWeight: FontWeight.bold,
+                      fontFamily: 'SF Pro',
                     ),
                   ),
                 ),
