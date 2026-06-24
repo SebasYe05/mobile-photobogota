@@ -88,7 +88,7 @@ class _RegistroState extends State<Registro> {
                       if (value == null || value.isEmpty) {
                         return 'Ingresa tu correo electrónico';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$').hasMatch(value)) {
                         return 'Ingresa un correo válido';
                       }
                       return null;
@@ -133,11 +133,11 @@ class _RegistroState extends State<Registro> {
                     icon: Icons.calendar_month,
                     soloLectura: true,
                     onTap: () async {
-                      DateTime? fecha = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(1950),
-                        lastDate: DateTime(2099),
+DateTime? fecha = await showDatePicker(
+                         context: context,
+                         initialDate: DateTime.now().subtract(Duration(days: 365 * 18)),
+                         firstDate: DateTime(1950),
+                         lastDate: DateTime.now().subtract(Duration(days: 365 * 18)),
                       );
                       if (fecha != null) {
                         setState(() {
@@ -147,12 +147,18 @@ class _RegistroState extends State<Registro> {
                         });
                       }
                     },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Selecciona tu fecha de nacimiento';
-                      }
-                      return null;
-                    },
+validator: (value) {
+                       if (value == null || value.isEmpty) {
+                         return 'Selecciona tu fecha de nacimiento';
+                       }
+                       if (fechaNacimiento != null) {
+                         final edad = DateTime.now().difference(fechaNacimiento!).inDays ~/ 365;
+                         if (edad < 18) {
+                           return 'Debes tener al menos 18 años';
+                         }
+                       }
+                       return null;
+                     },
                   ),
                   CampoTexto(
                     controller: passwordController,
