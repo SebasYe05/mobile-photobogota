@@ -39,8 +39,32 @@ class HomeScreen extends StatelessWidget {
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
-              )
-            )
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.map),
+              title: const Text('Mapa'),
+              onTap: () {
+                // Navegar a la pantalla del mapa
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: const Text('Perfil'),
+              onTap: () {
+                // Navegar a la pantalla del perfil
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: const Text('Configuración'),
+              onTap: () {
+                // Navegar a la pantalla de configuración
+                Navigator.pop(context);
+              },
+            ),
           ]
         ),
       ),
