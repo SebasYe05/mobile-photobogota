@@ -48,4 +48,27 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<String?> getToken() async {
     return await storage.read(key: 'jwt_token');
   }
+
+  @override
+  Future<void> forgotPassword(String email) async {
+    await remoteDataSource.forgotPassword(email);
+  }
+
+  @override
+  Future<void> verifyCode(String email, String code) async {
+    await remoteDataSource.verifyCode(email, code);
+  }
+
+  @override
+  Future<void> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async {
+    await remoteDataSource.resetPassword(
+      email: email,
+      code: code,
+      newPassword: newPassword,
+    );
+  }
 }

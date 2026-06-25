@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:photobogota/features/auth/presentation/screens/register_screen.dart';
-import 'package:photobogota/features/auth/presentation/screens/forgot_password_screen.dart';
+import 'package:photobogota/features/auth/presentation/screens/login_screen.dart';
 import 'package:photobogota/features/auth/presentation/controllers/auth_bloc.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class ResetPassword extends StatefulWidget {
+  final String email;
+  final String code;
+  const ResetPassword({super.key, required this.email, required this.code});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<ResetPassword> createState() => _ResetPasswordState();
 }
 
-class _LoginState extends State<Login> {
-  final usuarioController = TextEditingController();
+class _ResetPasswordState extends State<ResetPassword> {
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   bool ocultarPassword = true;
 
   @override
@@ -31,7 +32,7 @@ class _LoginState extends State<Login> {
                 const SizedBox(height: 40),
                 const SizedBox(height: 20),
                 const Text(
-                  "Accede a tu cuenta",
+                  "Nueva contraseña",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Color(0xFF806FBE)),
                 ),
@@ -60,6 +61,16 @@ class _LoginState extends State<Login> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(state.message)),
                           );
+                        } else if (state is ResetPasswordSuccess) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Contraseña actualizada")),
+                          );
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => const Login()),
+                            (route) => false,
+                          );
                         }
                       },
                       builder: (context, state) {
@@ -67,11 +78,24 @@ class _LoginState extends State<Login> {
                         return Column(
                           children: [
                             TextField(
-                              controller: usuarioController,
+                              controller: passwordController,
+                              obscureText: ocultarPassword,
                               enabled: !cargando,
                               decoration: InputDecoration(
-                                labelText: "Usuario o correo",
-                                prefixIcon: const Icon(Icons.person),
+                                labelText: "Nueva contraseña",
+                                prefixIcon: const Icon(Icons.lock),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    ocultarPassword
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      ocultarPassword = !ocultarPassword;
+                                    });
+                                  },
+                                ),
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: OutlineInputBorder(
@@ -82,12 +106,12 @@ class _LoginState extends State<Login> {
                             ),
                             const SizedBox(height: 20),
                             TextField(
-                              controller: passwordController,
+                              controller: confirmPasswordController,
                               obscureText: ocultarPassword,
                               enabled: !cargando,
                               decoration: InputDecoration(
-                                labelText: "Contraseña",
-                                prefixIcon: const Icon(Icons.lock),
+                                labelText: "Confirmar contraseña",
+                                prefixIcon: const Icon(Icons.lock_outline),
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     ocultarPassword
@@ -113,7 +137,7 @@ class _LoginState extends State<Login> {
                               width: double.infinity,
                               height: 55,
                               child: ElevatedButton(
-                                onPressed: cargando ? null : _login,
+                                onPressed: cargando ? null : _resetPassword,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF806fbe),
                                   shape: RoundedRectangleBorder(
@@ -125,7 +149,7 @@ class _LoginState extends State<Login> {
                                         color: Colors.white,
                                       )
                                     : const Text(
-                                        "Ingresar",
+                                        "Actualizar contraseña",
                                         style: TextStyle(
                                           fontSize: 18,
                                           color: Colors.white,
@@ -134,48 +158,9 @@ class _LoginState extends State<Login> {
                                       ),
                               ),
                             ),
-                            const SizedBox(height: 20),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ForgotPassword(),
-                                  ),
-                                );
-                              },
-                              child: const Text(
-                                "¿Olvidaste tu contraseña?",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFF806fbe),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
                           ],
                         );
                       },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 25),
-                Divider(color: Colors.grey[300], thickness: 1),
-                const SizedBox(height: 25),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Registro()),
-                    );
-                  },
-                  child: const Text(
-                    "¿Eres nuevo en Photo Bogotá? Crear cuenta",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFF806fbe),
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -187,17 +172,35 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void _login() {
-    final username = usuarioController.text.trim();
+  void _resetPassword() {
     final password = passwordController.text.trim();
+    final confirm = confirmPasswordController.text.trim();
 
-    if (username.isEmpty || password.isEmpty) {
+    if (password.isEmpty || confirm.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Ingresa usuario y contraseña")),
+        const SnackBar(content: Text("Completa todos los campos")),
+      );
+      return;
+    }
+    if (password != confirm) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Las contraseñas no coinciden")),
+      );
+      return;
+    }
+    if (password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("La contraseña debe tener al menos 6 caracteres")),
       );
       return;
     }
 
-    context.read<AuthBloc>().add(LoginSubmitted(username, password));
+    context.read<AuthBloc>().add(
+          ResetPasswordSubmitted(
+            widget.email,
+            widget.code,
+            password,
+          ),
+        );
   }
 }

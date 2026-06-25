@@ -39,6 +39,24 @@ class RegisterSubmitted extends AuthEvent {
 /// Evento que se dispara cuando el usuario presiona el botón de "Cerrar Sesión".
 class LogoutRequested extends AuthEvent {}
 
+class ForgotPasswordSubmitted extends AuthEvent {
+  final String email;
+  ForgotPasswordSubmitted(this.email);
+}
+
+class VerifyCodeSubmitted extends AuthEvent {
+  final String email;
+  final String code;
+  VerifyCodeSubmitted(this.email, this.code);
+}
+
+class ResetPasswordSubmitted extends AuthEvent {
+  final String email;
+  final String code;
+  final String newPassword;
+  ResetPasswordSubmitted(this.email, this.code, this.newPassword);
+}
+
 
 // ==========================================
 // 2. LOS ESTADOS (Lo que el BLoC le responde a la Vista)
@@ -62,6 +80,12 @@ class Unauthenticated extends AuthState {}
 /// Nota: NO es lo mismo que Authenticated, porque registrarse no inicia sesión
 /// automáticamente (tu backend solo confirma la creación, no devuelve token aquí).
 class RegisterSuccess extends AuthState {}
+
+class ForgotPasswordSuccess extends AuthState {}
+
+class VerifyCodeSuccess extends AuthState {}
+
+class ResetPasswordSuccess extends AuthState {}
 
 /// Estado de error: Algo salió mal (ej. contraseña incorrecta, email duplicado, etc).
 /// La vista muestra un SnackBar con el mensaje. Sirve tanto para login como para registro.
@@ -149,14 +173,43 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // MANEJADOR DEL EVENTO: LogoutRequested
     // ------------------------------------------
     on<LogoutRequested>((event, emit) async {
-      // Ponemos la app en estado de carga mientras borramos los datos locales
       emit(AuthLoading());
-
-      // Borramos el JWT Token del FlutterSecureStorage a través del repositorio
       await authRepository.logout();
-
-      // Le avisamos a la vista que regrese al flujo de desautenticado (pantalla de login)
       emit(Unauthenticated());
+    });
+
+    on<ForgotPasswordSubmitted>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await authRepository.forgotPassword(event.email);
+        emit(ForgotPasswordSuccess());
+      } catch (e) {
+        emit(AuthFailure(e.toString()));
+      }
+    });
+
+    on<VerifyCodeSubmitted>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await authRepository.verifyCode(event.email, event.code);
+        emit(VerifyCodeSuccess());
+      } catch (e) {
+        emit(AuthFailure(e.toString()));
+      }
+    });
+
+    on<ResetPasswordSubmitted>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await authRepository.resetPassword(
+          email: event.email,
+          code: event.code,
+          newPassword: event.newPassword,
+        );
+        emit(ResetPasswordSuccess());
+      } catch (e) {
+        emit(AuthFailure(e.toString()));
+      }
     });
   }
 }

@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:photobogota/features/auth/presentation/screens/register_screen.dart';
-import 'package:photobogota/features/auth/presentation/screens/forgot_password_screen.dart';
+import 'package:photobogota/features/auth/presentation/screens/verify_code_screen.dart';
 import 'package:photobogota/features/auth/presentation/controllers/auth_bloc.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class ForgotPassword extends StatefulWidget {
+  const ForgotPassword({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<ForgotPassword> createState() => _ForgotPasswordState();
 }
 
-class _LoginState extends State<Login> {
-  final usuarioController = TextEditingController();
-  final passwordController = TextEditingController();
-  bool ocultarPassword = true;
+class _ForgotPasswordState extends State<ForgotPassword> {
+  final emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +28,7 @@ class _LoginState extends State<Login> {
                 const SizedBox(height: 40),
                 const SizedBox(height: 20),
                 const Text(
-                  "Accede a tu cuenta",
+                  "Recupera tu acceso",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Color(0xFF806FBE)),
                 ),
@@ -60,6 +57,18 @@ class _LoginState extends State<Login> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(state.message)),
                           );
+                        } else if (state is ForgotPasswordSuccess) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Código enviado a tu correo")),
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  VerifyCode(email: emailController.text.trim()),
+                            ),
+                          );
                         }
                       },
                       builder: (context, state) {
@@ -67,39 +76,11 @@ class _LoginState extends State<Login> {
                         return Column(
                           children: [
                             TextField(
-                              controller: usuarioController,
+                              controller: emailController,
                               enabled: !cargando,
                               decoration: InputDecoration(
-                                labelText: "Usuario o correo",
-                                prefixIcon: const Icon(Icons.person),
-                                fillColor: Colors.white,
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            TextField(
-                              controller: passwordController,
-                              obscureText: ocultarPassword,
-                              enabled: !cargando,
-                              decoration: InputDecoration(
-                                labelText: "Contraseña",
-                                prefixIcon: const Icon(Icons.lock),
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    ocultarPassword
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      ocultarPassword = !ocultarPassword;
-                                    });
-                                  },
-                                ),
+                                labelText: "Correo electrónico",
+                                prefixIcon: const Icon(Icons.email),
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: OutlineInputBorder(
@@ -113,7 +94,7 @@ class _LoginState extends State<Login> {
                               width: double.infinity,
                               height: 55,
                               child: ElevatedButton(
-                                onPressed: cargando ? null : _login,
+                                onPressed: cargando ? null : _forgotPassword,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF806fbe),
                                   shape: RoundedRectangleBorder(
@@ -125,33 +106,13 @@ class _LoginState extends State<Login> {
                                         color: Colors.white,
                                       )
                                     : const Text(
-                                        "Ingresar",
+                                        "Enviar código",
                                         style: TextStyle(
                                           fontSize: 18,
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ForgotPassword(),
-                                  ),
-                                );
-                              },
-                              child: const Text(
-                                "¿Olvidaste tu contraseña?",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFF806fbe),
-                                  fontWeight: FontWeight.bold,
-                                ),
                               ),
                             ),
                           ],
@@ -161,17 +122,10 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 const SizedBox(height: 25),
-                Divider(color: Colors.grey[300], thickness: 1),
-                const SizedBox(height: 25),
                 TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Registro()),
-                    );
-                  },
+                  onPressed: () => Navigator.pop(context),
                   child: const Text(
-                    "¿Eres nuevo en Photo Bogotá? Crear cuenta",
+                    "Volver al inicio de sesión",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Color(0xFF806fbe),
@@ -187,17 +141,14 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void _login() {
-    final username = usuarioController.text.trim();
-    final password = passwordController.text.trim();
-
-    if (username.isEmpty || password.isEmpty) {
+  void _forgotPassword() {
+    final email = emailController.text.trim();
+    if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Ingresa usuario y contraseña")),
+        const SnackBar(content: Text("Ingresa tu correo electrónico")),
       );
       return;
     }
-
-    context.read<AuthBloc>().add(LoginSubmitted(username, password));
+    context.read<AuthBloc>().add(ForgotPasswordSubmitted(email));
   }
 }
