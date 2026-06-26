@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-
   // Definición de los colores basados en tu index.css
   static const Color backgroundColor = Color(0xFFF5F2EB);
   static const Color primaryColor = Color(0xFF806FBE);
@@ -10,20 +9,46 @@ class AppTheme {
   static const Color mutedColor = Color(0xFF6C757D);
   static const Color borderColor = Color(0xFFE8E8E8);
 
-  
+  static const Color lightColor = Color(0xFFFFFFFF);
+  static const Color secondaryColor = Color(
+    0xFFEDE7F8,
+  ); // lavanda claro, tinte de primaryColor
+  static const Color bgSoftColor = Color(
+    0xFFF1ECFB,
+  ); // fondo suave para chips/botones secundarios
+  static const Color successColor = Color(0xFF4CAF93);
+  static const Color warningColor = Color(0xFFE0A458);
+  static const Color starColor = Color(0xFFF5B544);
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       scaffoldBackgroundColor: backgroundColor,
       primaryColor: primaryColor,
-      
+
       // Configuración de la Tipografía (SF Pro / Poppins)
       fontFamily: 'SF Pro',
       textTheme: const TextTheme(
-        displayLarge: TextStyle(color: darkColor, fontSize: 32, fontWeight: FontWeight.bold),
-        titleLarge: TextStyle(color: darkColor, fontSize: 20, fontWeight: FontWeight.w600),
-        bodyLarge: TextStyle(color: darkColor, fontSize: 16, fontWeight: FontWeight.normal),
-        bodyMedium: TextStyle(color: mutedColor, fontSize: 14, fontWeight: FontWeight.normal),
+        displayLarge: TextStyle(
+          color: darkColor,
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+        ),
+        titleLarge: TextStyle(
+          color: darkColor,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+        ),
+        bodyLarge: TextStyle(
+          color: darkColor,
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+        bodyMedium: TextStyle(
+          color: mutedColor,
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
       ),
 
       // Estilo global para los Botones Redondeados (Pill)
@@ -47,7 +72,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: borderColor),
