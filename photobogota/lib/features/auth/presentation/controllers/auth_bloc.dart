@@ -102,22 +102,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // ------------------------------------------
     // MANEJADOR DEL EVENTO: LoginSubmitted
     // ------------------------------------------
-    on<LoginSubmitted>((event, emit) async {
-      // Pasito 1: Inmediatamente le avisamos a la vista que ponga un spinner de carga
-      emit(AuthLoading());
+on<LoginSubmitted>((event, emit) async {
+       emit(AuthLoading());
 
-      try {
-        // Pasito 2: Mandamos los datos que venían en el evento hacia el repositorio
-        await authRepository.login(event.username, event.password);
+       try {
+         await authRepository.login(event.username, event.password);
 
-        // Pasito 3: Si el repositorio no falló, emitimos éxito
-        emit(Authenticated());
-      } catch (e) {
-        // Pasito 4: Si el repositorio atrapó un error de red o credenciales,
-        // emitimos el fallo con el mensaje correspondiente para avisar al usuario.
-        emit(AuthFailure(e.toString()));
-      }
-    });
+         emit(Authenticated());
+       } catch (e) {
+         emit(AuthFailure(e.toString()));
+       }
+     });
 
     // ------------------------------------------
     // MANEJADOR DEL EVENTO: RegisterSubmitted

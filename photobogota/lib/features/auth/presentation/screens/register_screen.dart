@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photobogota/features/auth/presentation/widgets/inputtext.dart';
 import 'package:photobogota/features/auth/presentation/controllers/auth_bloc.dart';
 import 'package:photobogota/features/auth/presentation/screens/login_screen.dart';
+import 'package:photobogota/core/theme/theme.dart';
 
 class Registro extends StatefulWidget {
   const Registro({super.key});
@@ -28,11 +29,11 @@ class _RegistroState extends State<Registro> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Photo Bogotá'),
+        title: const Text('Photobogotá'),
         backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF806fbe),
+        foregroundColor: AppTheme.primaryColor,
       ),
-      backgroundColor: const Color(0xFFf5f2eb),
+      backgroundColor: AppTheme.backgroundColor,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(
@@ -47,16 +48,16 @@ class _RegistroState extends State<Registro> {
                     content: Text("Usuario registrado correctamente"),
                   ),
                 );
-                // Mandamos al usuario al Login para que inicie sesión
-                // con la cuenta que acaba de crear.
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const Login()),
                 );
               } else if (state is AuthFailure) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.message)),
-                );
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+                });
               }
             },
             builder: (context, state) {
@@ -70,10 +71,11 @@ class _RegistroState extends State<Registro> {
                     style: TextStyle(
                       fontSize: 34,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF0a0a0a),
+                      color: AppTheme.darkColor,
+                      fontFamily: 'SF Pro',
                     ),
                   ),
-                  Divider(color: Colors.grey[300], thickness: 1),
+                  Divider(color: AppTheme.borderColor, thickness: 1),
                   const SizedBox(height: 20),
 
                   // Campos de texto
@@ -82,21 +84,50 @@ class _RegistroState extends State<Registro> {
                     label: 'Correo electrónico',
                     icon: Icons.email,
                     tipoTeclado: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingresa tu correo electrónico';
+                      }
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$',
+                      ).hasMatch(value)) {
+                        return 'Ingresa un correo válido';
+                      }
+                      return null;
+                    },
                   ),
                   CampoTexto(
                     controller: nombreController,
                     label: 'Nombre',
                     icon: Icons.edit,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingresa tu nombre';
+                      }
+                      return null;
+                    },
                   ),
                   CampoTexto(
                     controller: apellidoController,
                     label: 'Apellido',
                     icon: Icons.edit,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingresa tu apellido';
+                      }
+                      return null;
+                    },
                   ),
                   CampoTexto(
                     controller: usuarioController,
                     label: 'Usuario',
                     icon: Icons.person,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingresa tu usuario';
+                      }
+                      return null;
+                    },
                   ),
                   CampoTexto(
                     controller: fechaController,
@@ -106,9 +137,13 @@ class _RegistroState extends State<Registro> {
                     onTap: () async {
                       DateTime? fecha = await showDatePicker(
                         context: context,
-                        initialDate: DateTime.now(),
+                        initialDate: DateTime.now().subtract(
+                          Duration(days: 365 * 18),
+                        ),
                         firstDate: DateTime(1950),
-                        lastDate: DateTime(2099),
+                        lastDate: DateTime.now().subtract(
+                          Duration(days: 365 * 18),
+                        ),
                       );
                       if (fecha != null) {
                         setState(() {
@@ -118,18 +153,52 @@ class _RegistroState extends State<Registro> {
                         });
                       }
                     },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Selecciona tu fecha de nacimiento';
+                      }
+                      if (fechaNacimiento != null) {
+                        final edad =
+                            DateTime.now()
+                                .difference(fechaNacimiento!)
+                                .inDays ~/
+                            365;
+                        if (edad < 18) {
+                          return 'Debes tener al menos 18 años';
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   CampoTexto(
                     controller: passwordController,
                     label: 'Contraseña',
                     icon: Icons.lock,
                     esPassword: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingresa tu contraseña';
+                      }
+                      if (value.length < 8) {
+                        return 'La contraseña debe tener al menos 8 caracteres';
+                      }
+                      return null;
+                    },
                   ),
                   CampoTexto(
                     controller: confirmarPasswordController,
                     label: 'Confirmar contraseña',
                     icon: Icons.lock_outline,
                     esPassword: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Confirma tu contraseña';
+                      }
+                      if (value != passwordController.text) {
+                        return 'Las contraseñas no coinciden';
+                      }
+                      return null;
+                    },
                   ),
 
                   const SizedBox(height: 20),
@@ -151,9 +220,7 @@ class _RegistroState extends State<Registro> {
                         ),
                       ),
                       child: cargando
-                          ? const CircularProgressIndicator(
-                              color: Colors.white,
-                            )
+                          ? const CircularProgressIndicator(color: Colors.white)
                           : const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -193,14 +260,13 @@ class _RegistroState extends State<Registro> {
     }
 
     context.read<AuthBloc>().add(
-          RegisterSubmitted(
-            nombresCompletos:
-                "${nombreController.text} ${apellidoController.text}",
-            email: emailController.text,
-            nombreUsuario: usuarioController.text,
-            contrasena: passwordController.text,
-            fechaNacimiento: fechaFormateada,
-          ),
-        );
+      RegisterSubmitted(
+        nombresCompletos: "${nombreController.text} ${apellidoController.text}",
+        email: emailController.text,
+        nombreUsuario: usuarioController.text,
+        contrasena: passwordController.text,
+        fechaNacimiento: fechaFormateada,
+      ),
+    );
   }
 }

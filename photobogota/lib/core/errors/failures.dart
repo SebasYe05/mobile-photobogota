@@ -1,6 +1,9 @@
 abstract class Failure {
   final String message;
   const Failure(this.message);
+
+  @override
+  String toString() => message;
 }
 
 class ServerFailure extends Failure {
@@ -8,5 +11,5 @@ class ServerFailure extends Failure {
 }
 
 class NetworkFailure extends Failure {
-  const NetworkFailure() : super('Sin conexión a internet');
+  const NetworkFailure() : super('No esta conectado con el servidor. Por favor, revise su conexión a internet.');
 }
