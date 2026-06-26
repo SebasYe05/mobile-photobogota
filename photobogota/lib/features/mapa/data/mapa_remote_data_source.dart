@@ -14,7 +14,7 @@ class MapaRemoteDataSource {
 
   Future<List<OpcionFiltroModel>> getCategoriasActivas() async {
     try {
-      final response = await _dio.get('/categorias/activas');
+      final response = await _dio.get('/categorias');
       final List data = response.data is List
           ? response.data
           : (response.data['data'] ?? []);
@@ -28,7 +28,7 @@ class MapaRemoteDataSource {
 
   Future<List<OpcionFiltroModel>> getLocalidadesActivas() async {
     try {
-      final response = await _dio.get('/localidades/activas');
+      final response = await _dio.get('/localidades');
       final List data = response.data is List
           ? response.data
           : (response.data['data'] ?? []);
