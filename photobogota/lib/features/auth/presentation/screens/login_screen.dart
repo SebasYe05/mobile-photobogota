@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photobogota/features/auth/presentation/screens/register_screen.dart';
+import 'package:photobogota/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:photobogota/features/auth/presentation/controllers/auth_bloc.dart';
 import 'package:photobogota/core/theme/theme.dart';
 import 'package:photobogota/features/auth/presentation/widgets/inputtext.dart';
@@ -113,6 +114,26 @@ listener: (context, state) {
                                         color: Colors.white,
                                       )
                                     : const Text("Ingresar"),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ForgotPassword(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                "¿Olvidaste tu contraseña?",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF806fbe),
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
