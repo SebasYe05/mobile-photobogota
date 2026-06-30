@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photobogota/features/auth/presentation/controllers/auth_bloc.dart';
+import 'package:photobogota/features/mapa/presentation/screens/mapa_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -69,10 +70,7 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       body: const Center(
-        child: Text(
-          'Aquí va tu mapa',
-          style: TextStyle(fontSize: 24),
-        ),
+        child: MapaScreen(),
       ),
     );
   }
