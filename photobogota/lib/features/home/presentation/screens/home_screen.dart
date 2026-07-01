@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photobogota/features/auth/presentation/controllers/auth_bloc.dart';
 import 'package:photobogota/features/mapa/presentation/screens/mapa_screen.dart';
+// import 'package:photobogota/features/presentation/screens/PostSpotScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -14,11 +15,22 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF806fbe),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              context.read<AuthBloc>().add(LogoutRequested());
-            },
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: TextButton.icon(
+              onPressed: () {
+                // Navigator.push(
+                //   context,
+                //   // MaterialPageRoute(
+                //     // builder: (context) => const PostSpotScreen(),
+                //   ),
+                // );
+              },
+              icon: const Icon(Icons.add, color: Color(0xFF806fbe)),
+              label: const Text(
+                'Publicar Spot'
+              ),
+            ),
           ),
         ],
       ),
@@ -42,29 +54,61 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.map),
-              title: const Text('Mapa'),
-              onTap: () {
-                // Navegar a la pantalla del mapa
-                Navigator.pop(context);
-              },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: ListTile(
+                leading: const Icon(Icons.map),
+                title: const Text('Mapa'),
+                onTap: () {
+                  Navigator.pop(context); // Cierra el Drawer
+                },
+              ),
             ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: const Text('Perfil'),
-              onTap: () {
-                // Navegar a la pantalla del perfil
-                Navigator.pop(context);
-              },
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text('Perfil'),
+                onTap: () {
+                  Navigator.pop(context); // Cierra el Drawer
+                },
+              ),
             ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: const Text('Configuración'),
-              onTap: () {
-                // Navegar a la pantalla de configuración
-                Navigator.pop(context);
-              },
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text('Configuración'),
+                onTap: () {
+                  Navigator.pop(context); 
+                },
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: ListTile(
+                leading: const Icon(Icons.handshake_outlined),
+                title: const Text('Ser socio'),
+                onTap:() {
+                  Navigator.pop(context); 
+                }
+              ),
+            ),
+            SafeArea(child: 
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('Cerrar sesión'),
+                onTap: () {
+                  context.read<AuthBloc>().add(LogoutRequested());
+                  Navigator.pop(context); 
+                },
+              ),
+            ),
             ),
           ]
         ),
