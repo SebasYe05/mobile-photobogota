@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photobogota/features/auth/presentation/controllers/auth_bloc.dart';
 import 'package:photobogota/features/mapa/presentation/screens/mapa_screen.dart';
-// import 'package:photobogota/features/presentation/screens/PostSpotScreen.dart';
+
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -19,12 +19,12 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.only(right: 8.0),
             child: TextButton.icon(
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   // MaterialPageRoute(
-                //     // builder: (context) => const PostSpotScreen(),
-                //   ),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PostSpotScreen(),
+                  ),
+                );
               },
               icon: const Icon(Icons.add, color: Color(0xFF806fbe)),
               label: const Text(
